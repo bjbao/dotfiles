@@ -210,8 +210,55 @@ export GIT_PS1_SHOWDIRTYSTATE=1
 export PS1="\[\e[32m\]\u\[\e[m\]\[\e[32m\]@\[\e[m\]\[\e[32m\]\h\[\e[m\]\[\e[36m\]\`parse_git_branch\`\[\e[m\]:\[\e[34m\]\w\[\e[m\]\\$ "
 
 # Add z jump https://github.com/rupa/z.git
-. ~/src/z/z.sh
+# . ~/src/z/z.sh
 . "$HOME/.cargo/env"
 
-# Direnv for Motor_subsystem/Nix
+# Direnv for Nix
 eval "$(direnv hook bash)"
+
+# zoxide and fzf
+export FZF_DEFAULT_COMMAND='fd --type f --strip-cwd-prefix --exclude .git' 
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND" 
+export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --exclude .git' 
+[ -f ~/.fzf.bash ] && source ~/.fzf.bash 
+eval "$(zoxide init bash)"
+
+# Function to fetch zoxide paths into fzf and paste to command line
+_z_path_widget() {
+    # Get the path from zoxide and fzf
+    local selected_path=$(zoxide query -l | fzf --height 40% --reverse --header="Insert Z-Path")
+    
+    # If a path was selected, insert it into the current command line
+    if [ -n "$selected_path" ]; then 
+        READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}$selected_path${READLINE_LINE:$READLINE_POINT}" 
+        READLINE_POINT=$((READLINE_POINT + ${#selected_path}))
+    fi
+}
+
+# Bind the function to Alt-z (\ez)
+bind -x '"\ez": _z_path_widget'
+
+if [[ -n "$BASH_VERSION" ]]; then 
+    WIN_HOME=$(powershell.exe -c 'Write-Host -NoNewLine $env:userprofile' | xargs -0 wslpath)
+    # Custom search that looks in both WSL home and Windows User folder Replace 'YourWindowsName' with your actual 
+    # Windows username
+    find_both() {
+    local selected=$(
+        fd . ~ "$WIN_HOME" --max-depth 4 \
+        | fzf --height 40% --layout=reverse \
+              --header="Searching WSL + Windows"
+    )
+
+    if [ -n "$selected" ]; then
+        if [ -d "$selected" ]; then
+            cd "$selected"
+        else
+            local left="${READLINE_LINE:0:READLINE_POINT}"
+            local right="${READLINE_LINE:READLINE_POINT}"
+            READLINE_LINE="${READLINE_LINE:0:$READLINE_POINT}$selected${READLINE_LINE:$READLINE_POINT}"
+            READLINE_POINT=$((READLINE_POINT + ${#selected}))
+        fi
+    fi
+    }
+    bind -x '"\ew": find_both' # Mapped to Alt+w
+fi
