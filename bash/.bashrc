@@ -262,3 +262,6 @@ if [[ -n "$BASH_VERSION" ]]; then
     }
     bind -x '"\ew": find_both' # Mapped to Alt+w
 fi
+
+alias wcode="/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe"
+
