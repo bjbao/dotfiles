@@ -264,4 +264,5 @@ if [[ -n "$BASH_VERSION" ]]; then
 fi
 
 alias wcode="/mnt/c/Users/$USER/AppData/Local/Programs/Microsoft\ VS\ Code/Code.exe"
+alias npp='/mnt/c/Program\ Files/Notepad++/notepad++.exe'
 
