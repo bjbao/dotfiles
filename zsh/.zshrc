@@ -113,6 +113,7 @@ if command -v fd >/dev/null 2>&1; then
     export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
     export FZF_ALT_C_COMMAND='fd --type d --strip-cwd-prefix --exclude .git'
 fi
+[[ -d ~/.fzf/bin && ! -x $(command -v fzf) ]] && export PATH="$PATH:$HOME/.fzf/bin"
 if [[ -f ~/.fzf.zsh ]]; then
     source ~/.fzf.zsh
 elif command -v fzf >/dev/null 2>&1 && fzf --zsh >/dev/null 2>&1; then
@@ -153,3 +154,17 @@ if [[ -n $WSL_DISTRO_NAME ]]; then
     zle -N _find_both_widget
     bindkey '^[w' _find_both_widget
 fi
+
+# ---------- Syntax highlighting (must be sourced last) ----------
+# Linux: git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
+# macOS: brew install zsh-syntax-highlighting
+for f in \
+    ~/.zsh/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    /opt/homebrew/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh \
+    /usr/local/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh; do
+    if [[ -f $f ]]; then
+        source "$f"
+        break
+    fi
+done
+unset f

@@ -7,7 +7,7 @@ BASEDIR="$(cd "$(dirname -- "$0")" && pwd)"
 # Install zsh and plugins
 if [ "$(uname)" = "Darwin" ]; then
     if command -v brew >/dev/null 2>&1; then
-        brew install zsh-autosuggestions fzf fd zoxide
+        brew install zsh-autosuggestions zsh-syntax-highlighting fzf fd zoxide
     else
         echo "Homebrew not found; install it from https://brew.sh, then re-run this script."
         exit 1
@@ -16,10 +16,9 @@ else
     if ! command -v zsh >/dev/null 2>&1; then
         sudo apt install -y zsh || exit 1
     fi
-    if [ ! -d ~/.zsh/zsh-autosuggestions ]; then
-        mkdir -p ~/.zsh
-        git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
-    fi
+    mkdir -p ~/.zsh
+    [ -d ~/.zsh/zsh-autosuggestions ] || git clone --depth 1 https://github.com/zsh-users/zsh-autosuggestions ~/.zsh/zsh-autosuggestions
+    [ -d ~/.zsh/zsh-syntax-highlighting ] || git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh/zsh-syntax-highlighting
 fi
 
 # Link ~/.zshrc, keeping a backup of any existing real file
